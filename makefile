@@ -15,11 +15,13 @@ licence := see licence.txt
 sources := \
 opencv_extensions.cc \
 gui_window.cc \
+image_gui.cc \
 figure.cc
 
 headers := \
 opencv_extensions.h \
 gui_window.h \
+image_gui.h \
 figure.h
 
 #
