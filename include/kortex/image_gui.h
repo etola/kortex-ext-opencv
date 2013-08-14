@@ -14,18 +14,19 @@
 #ifndef KORTEX_IMAGE_GUI_H
 #define KORTEX_IMAGE_GUI_H
 
-#include <kortex/gui_window.h>
+#include "kortex/gui_window.h"
 
 namespace kortex {
 
     class Image;
-    void display( const Image* img );
+    void display( const Image* img, int w=0 );
 
     class ImageGUI {
     public:
         ImageGUI();
+        ~ImageGUI();
         void setup( const Image* img );
-        void create();
+        void create( int window_width );
         void display();
     private:
         gui_window  wimg;
@@ -48,7 +49,7 @@ namespace kortex {
 
         void reset_mouse();
         void catch_mouse();
-        void catch_keyboard();
+        bool catch_keyboard();
     };
 
 

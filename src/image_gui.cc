@@ -12,16 +12,17 @@
 //
 // ---------------------------------------------------------------------------
 
-#include <kortex/image_gui.h>
+#include "kortex/image_gui.h"
 #include <kortex/image.h>
 #include <kortex/string.h>
+#include <kortex/image_space_mapping.h>
 
 namespace kortex {
 
-    void display( const Image* img ) {
+    void display( const Image* img, int w ) {
         ImageGUI g;
         g.setup( img );
-        g.create();
+        g.create( w );
         g.display();
     }
 
@@ -36,6 +37,14 @@ namespace kortex {
         gw = 700;
         gh = 700;
         zsz = 101;
+    }
+
+    ImageGUI::~ImageGUI() {
+        if( wzoom ) {
+            wzoom->destroy();
+            delete wzoom;
+            wzoom = NULL;
+        }
     }
 
     void ImageGUI::toggle_zoom_window() {
@@ -64,11 +73,25 @@ namespace kortex {
         wzoom->draw_rectangle( px, py, 2*rw+1, 2*rw+1 );
     }
 
-    void ImageGUI::create() {
-        gw = 700;
+    void ImageGUI::create( int window_width ) {
+        gw = (window_width) ? window_width : 600;
+        // gw = std::min(700, w );
         gh = gw / double( imgp->w() ) * imgp->h();
         wimg.set_name("image window");
-        wimg.set_image( imgp );
+
+        if( imgp->ch() == 1 ) {
+            ColorMap cm;
+            cm.cm_type = CMT_LINEAR;
+            cm.r_type  = RT_PERCENT;
+            cm.minv = 5;
+            cm.maxv = 90;
+            cm.invert = false;
+            Image tmp;
+            image_map( imgp, cm, &tmp );
+            wimg.set_image( &tmp );
+        } else {
+            wimg.set_image( imgp );
+        }
         wimg.create(0);
         wimg.resize(gw,gh);
         wimg.move(0,0);
@@ -84,14 +107,14 @@ namespace kortex {
         wimg.reset_mouse();
     }
 
-    void ImageGUI::catch_keyboard() {
+    bool ImageGUI::catch_keyboard() {
         int c = wimg.wait(5);
-        if( c == 'q' ) exit(1);
-        if( c == 'b' ) bhover = !bhover;
-        if( c == 'h' ) benable_help = !benable_help;
-        if( c == 'm' ) benable_shadow = !benable_shadow;
-        if( c == 'z' ) toggle_zoom_window();
-
+        if     ( c == 'q' ) return false;
+        else if( c == 'b' ) bhover = !bhover;
+        else if( c == 'h' ) benable_help = !benable_help;
+        else if( c == 'm' ) benable_shadow = !benable_shadow;
+        else if( c == 'z' ) toggle_zoom_window();
+        return true;
     }
 
     void ImageGUI::catch_mouse() {
@@ -101,7 +124,18 @@ namespace kortex {
         if( !wimg.mouse_click(1,gx,gy) ) {
             return;
         }
-        printf("clicked [%d %d]\n", gx, gy);
+
+        printf("clicked [%d %d] ", gx, gy);
+
+        if( imgp->ch() == 1 ) {
+            uchar v = imgp->getu(gx,gy);
+            printf("[val %d]\n", int(v));
+        } else if( imgp->ch() == 3 ) {
+            uchar r, g, b;
+            imgp->get( gx, gy, r, g, b );
+            printf("[val %d %d %d]\n", r, g, b );
+        }
+
         wimg.reset_mouse();
     }
 
@@ -109,7 +143,8 @@ namespace kortex {
         wimg.reset_mouse();
         while(1) {
             reset_display();
-            catch_keyboard();
+            if( !catch_keyboard() )
+                break;
             catch_mouse();
             draw_mouse_shadow();
             update_zoom_window();
@@ -117,6 +152,7 @@ namespace kortex {
             display_messages();
             refresh();
         }
+
     }
 
     void ImageGUI::reset_display() {
