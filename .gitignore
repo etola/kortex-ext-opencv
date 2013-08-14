@@ -1,0 +1,5 @@
+release
+debug
+test_in
+test_out
+*.pc
