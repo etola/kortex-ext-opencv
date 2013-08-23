@@ -11,8 +11,6 @@
 //
 // ---------------------------------------------------------------------------
 
-#ifdef WITH_OPENCV
-
 #ifndef KORTEX_FIGURE_H
 #define KORTEX_FIGURE_H
 
@@ -109,7 +107,5 @@ namespace kortex {
     };
 
 }
-
-#endif
 
 #endif

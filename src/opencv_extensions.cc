@@ -61,9 +61,9 @@ namespace kortex {
 
         switch( thickness ) {
         case 0:
-            (img->imageData+y*img->widthStep)[x*img->nChannels  ] = color->r;
+            (img->imageData+y*img->widthStep)[x*img->nChannels  ] = color->b;
             (img->imageData+y*img->widthStep)[x*img->nChannels+1] = color->g;
-            (img->imageData+y*img->widthStep)[x*img->nChannels+2] = color->b;
+            (img->imageData+y*img->widthStep)[x*img->nChannels+2] = color->r;
             break;
         default:
             draw_circle(img,x,y,2,color,thickness);

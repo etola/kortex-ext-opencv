@@ -11,8 +11,6 @@
 //
 // ---------------------------------------------------------------------------
 
-#ifdef WITH_OPENCV
-
 #ifndef KORTEX_GUI_WINDOW_H
 #define KORTEX_GUI_WINDOW_H
 
@@ -135,5 +133,3 @@ namespace kortex {
     };
 }
 #endif // KORTEX_GUI_WINDOW_H
-
-#endif // if KORTEX_WITH_OPENCV

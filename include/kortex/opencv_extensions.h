@@ -11,8 +11,6 @@
 //
 // ---------------------------------------------------------------------------
 
-#ifdef WITH_OPENCV
-
 #ifndef KORTEX_PAINT_OPENCV_H
 #define KORTEX_PAINT_OPENCV_H
 
@@ -56,6 +54,4 @@ namespace kortex {
     void write_on_image( Image* im, const vector<ImageTextInfo>& tinfo );
 
 }
-#endif
-
 #endif
