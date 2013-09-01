@@ -14,7 +14,7 @@
 #ifndef KORTEX_GUI_WINDOW_H
 #define KORTEX_GUI_WINDOW_H
 
-#include <kortex/color.h>
+#include "kortex/color.h"
 #include <string>
 
 #define MOUSE_LCLICK 1
@@ -42,11 +42,11 @@ namespace kortex {
     extern callback_info g_mouse_callback;
     void mouse_callback(int event, int x, int y, int flags, void* param);
 
-    class gui_window {
+    class GUIWindow {
     public:
-        gui_window();
-        gui_window( const string& name);
-        ~gui_window();
+        GUIWindow();
+        GUIWindow( const string& name);
+        ~GUIWindow();
 
         void create( const int& fixed=1 );
         void destroy();
@@ -63,8 +63,8 @@ namespace kortex {
         const IplImage* get_display() const;
         const IplImage* get_original_display() const;
 
-        void  set_display( const gui_window* src_wnd, const int& x, const int& y, const int& wsz );
-        void  set_original_display( const gui_window* src_wnd, const int& x, const int& y, const int& wsz );
+        void  set_display( const GUIWindow* src_wnd, const int& x, const int& y, const int& wsz );
+        void  set_original_display( const GUIWindow* src_wnd, const int& x, const int& y, const int& wsz );
 
         void set_margin( const int& m ) { margin=m; }
 

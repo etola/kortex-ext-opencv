@@ -14,21 +14,23 @@
 #ifndef KORTEX_FIGURE_H
 #define KORTEX_FIGURE_H
 
-#include <kortex/color.h>
-#include <kortex/rect2.h>
+#include "kortex/color.h"
+#include "kortex/rect2.h"
 
 #include <string>
 using std::string;
+#include <vector>
+using std::vector;
 
 namespace kortex {
 
-    class gui_window;
+    class GUIWindow;
 
-    class figure {
+    class Figure {
     public:
-        figure();
-        figure(const string& name);
-        ~figure();
+        Figure();
+        Figure(const string& name);
+        ~Figure();
         void create(const string& name="");
         void destroy();
 
@@ -45,6 +47,7 @@ namespace kortex {
         void set(const float* arr, const int& n);
         void set(const uchar* arr, const int& n);
         void set(const int  * arr, const int& n);
+        void set(const vector<float>& arr);
 
         void set_line_color(int r, int g, int b) { line_color=Color(b,g,r); }
         void set_bar_color (int r, int g, int b) { bar_color =Color(b,g,r); }
@@ -60,7 +63,7 @@ namespace kortex {
         // display
         void mark(int n, int r=-1, int g=-1, int b=-1);
         void plot(const float* arr, int n, int r=-1, int g=-1, int b=-1);
-        void line(float y0, int n0, float y1, int n1);
+        void line(int n0, float y0, int n1, float y1);
         void plot();
         void show();
         void refresh();
@@ -75,11 +78,19 @@ namespace kortex {
         void scatter(int index=-1);
         void bar(bool filled=true);
 
+        void save_screen( const string& file ) const;
+
+        void init_mouse();
+        void reset_mouse();
+        bool mouse_click( const int& button, int &x, int &y ) const;
+        bool mouse_move_event( int &x, int &y ) const;
+
+
     private:
         void init_();
 
-        float* farr;
-        int    narr;
+        vector<float> farr;
+        int narr;
 
         Rect2f range;
         int yticks;
@@ -93,6 +104,9 @@ namespace kortex {
         int h;
         int w;
 
+        void xy_to_gui_xy( float x, float y, float& gx, float& gy ) const;
+
+
         int     line_thickness;
         Color   axis_color;
         Color   line_color;
@@ -102,7 +116,7 @@ namespace kortex {
 
         string title;
         string wname;
-        gui_window* wnd;
+        GUIWindow* wnd;
 
     };
 

@@ -14,7 +14,7 @@
 #ifndef KORTEX_IMAGE_TEXT_INFO_H
 #define KORTEX_IMAGE_TEXT_INFO_H
 
-#include <kortex/color.h>
+#include "kortex/color.h"
 #include <string>
 
 namespace kortex {

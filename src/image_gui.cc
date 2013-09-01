@@ -55,7 +55,7 @@ namespace kortex {
             return;
         }
 
-        wzoom = new gui_window();
+        wzoom = new GUIWindow();
         wzoom->set_name("zoom");
         wzoom->create_display( zsz, zsz );
         wzoom->create(0);
@@ -128,8 +128,8 @@ namespace kortex {
         printf("clicked [%d %d] ", gx, gy);
 
         if( imgp->ch() == 1 ) {
-            uchar v = imgp->getu(gx,gy);
-            printf("[val %d]\n", int(v));
+            float v = imgp->get(gx,gy);
+            printf("[val %f]\n", v);
         } else if( imgp->ch() == 3 ) {
             uchar r, g, b;
             imgp->get( gx, gy, r, g, b );

@@ -13,36 +13,35 @@
 
 #ifdef WITH_OPENCV
 
-#include <kortex/figure.h>
-#include <kortex/gui_window.h>
 #include <kortex/mem_manager.h>
 #include <kortex/minmax.h>
 #include <kortex/string.h>
-
 #include <cstring>
+
+#include "kortex/figure.h"
+#include "kortex/gui_window.h"
 
 using namespace std;
 
 namespace kortex {
 
-    figure::figure() {
+    Figure::Figure() {
         init_();
     }
 
-    figure::figure( const string& name ) {
+    Figure::Figure( const string& name ) {
         init_();
         wname = name;
     }
 
-    void figure::set_name( const string& name ) {
+    void Figure::set_name( const string& name ) {
         wname = name;
     }
 
-    void figure::init_() {
+    void Figure::init_() {
         yticks =  4;
         xticks = 10;
 
-        farr   = NULL;
         narr   = 0;
 
         baxes   = true;
@@ -66,36 +65,58 @@ namespace kortex {
         wnd     = NULL;
     }
 
-    figure::~figure() {
-        deallocate(farr);
+    Figure::~Figure() {
         delete wnd;  wnd  = NULL;
     }
 
-    void figure::create(const string& name) {
+    void Figure::create(const string& name) {
         if( name != "" )
             wname = name;
-        wnd = new gui_window(wname);
+        wnd = new GUIWindow(wname);
         wnd->init(w,h,3);
         wnd->create();
     }
 
-    void figure::destroy() {
+    void Figure::destroy() {
         if( wnd ) wnd->destroy();
         delete wnd;
         wnd = NULL;
     }
 
-    void figure::reset( const int& nw, const int& nh ) {
+    void Figure::init_mouse() {
+        assert_pointer( wnd );
+        wnd->init_mouse();
+    }
+    void Figure::reset_mouse() {
+        assert_pointer( wnd );
+        wnd->reset_mouse();
+    }
+    bool Figure::mouse_click( const int& button, int &x, int &y ) const {
+        assert_pointer( wnd );
+        return wnd->mouse_click( button, x, y );
+    }
+    bool Figure::mouse_move_event(int &x, int &y ) const {
+        assert_pointer( wnd );
+        return wnd->mouse_move_event( x, y );
+    }
+
+    void Figure::save_screen( const string& file ) const {
+        assert_pointer( wnd );
+        wnd->save_screen( file );
+    }
+
+
+    void Figure::reset( const int& nw, const int& nh ) {
         wnd->reset_display();
     }
 
-    void figure::resize( const int& nw, const int& nh ) {
+    void Figure::resize( const int& nw, const int& nh ) {
         h = nh;
         w = nw;
         wnd->init(w,h,3);
     }
 
-    void figure::show() {
+    void Figure::show() {
         wnd->set_margin(margin);
         if( baxes ) draw_axis();//wnd->draw_axes(range,yticks,xticks);
         if( bgrid ) draw_grid();
@@ -107,58 +128,70 @@ namespace kortex {
         wnd->show();
     }
 
-    void figure::refresh() {
+    void Figure::refresh() {
         wnd->refresh();
     }
 
-    void figure::set( const float* arr, const int& n ) {
-        if( narr != n ) {
-            deallocate(farr);
-            allocate(farr,n);
-        }
-        memcpy(farr, arr, sizeof(*arr)*n );
-        narr = n;
+    void Figure::set( const float* arr, const int& n ) {
+        farr.resize( n );
+        for( int i=0; i<n; i++ )
+            farr[i] = arr[i];
         if(range.dy==0) {
             float mn,mx;
-            min(farr, narr, mn);
-            max(farr, narr, mx);
+            min(farr, mn);
+            max(farr, mx);
             range = Rect2f(mn,mx,0,narr);
         }
+        narr = farr.size();
     }
 
-    void figure::set(const int* arr, const int& n) {
-        if( narr != n ) {
-            deallocate(farr);
-            allocate(farr,n);
+    void Figure::set(const int* arr, const int& n) {
+        farr.resize( n );
+        for(int i=0; i<n; i++)
+            farr[i] = arr[i];
+        if(range.dy==0) {
+            float mn,mx;
+            min(farr, mn);
+            max(farr, mx);
+            range = Rect2f(mn,mx,0,narr);
         }
-        for(int i=0;i<n; i++)
-            farr[i]=arr[i];
-        narr = n;
+        narr = farr.size();
     }
 
-    void figure::set(const uchar* arr, const int& n) {
-        if( narr != n ) {
-            deallocate(farr);
-            allocate(farr,n);
+    void Figure::set(const uchar* arr, const int& n) {
+        farr.resize( n );
+        for(int i=0; i<n; i++)
+            farr[i] = arr[i];
+        if(range.dy==0) {
+            float mn,mx;
+            min(farr, mn);
+            max(farr, mx);
+            range = Rect2f(mn,mx,0,narr);
         }
-        for(int i=0;i<n; i++)
-            farr[i]=arr[i];
-        narr = n;
+        narr = farr.size();
+    }
+    void Figure::set(const vector<float>& arr) {
+        farr = arr;
+        if(range.dy==0) {
+            float mn,mx;
+            min(farr, mn);
+            max(farr, mx);
+            range = Rect2f(mn,mx,0,narr);
+        }
+        narr = farr.size();
     }
 
-
-    void figure::plot( const float* arr, int n, int r, int g, int b ) {
+    void Figure::plot( const float* arr, int n, int r, int g, int b ) {
         if( r!=-1 ) set_line_color(r,g,b);
         set(arr,n);
         plot();
     }
 
-    void figure::move( const int& x, const int& y ) {
+    void Figure::move( const int& x, const int& y ) {
         wnd->move(x,y);
     }
 
-    void figure::mark(int n, int r, int g, int b) {
-        if( !farr ) return;
+    void Figure::mark(int n, int r, int g, int b) {
         Color tmp = line_color;
         if( r==-1 ) line_color = mark_color;
         else        line_color = Color(r,g,b);
@@ -167,11 +200,11 @@ namespace kortex {
         line_color = tmp;
     }
 
-    int figure::wait(const int& n) const {
+    int Figure::wait(const int& n) const {
         return wnd->wait(n);
     }
 
-    void figure::draw_axis() {
+    void Figure::draw_axis() {
         wnd->set_color( axis_color );
         wnd->set_thickness( line_thickness );
         wnd->draw_line( margin, h-margin,   margin,   margin );
@@ -182,10 +215,14 @@ namespace kortex {
         float ystep = range.dy/(yticks);
         float xstep = range.dx/(xticks);
         int   tl    = dh/10;
+        float gx, gy;
         // xticks
         for( int i=0; i<=xticks; i++ ) {
             wnd->draw_line( margin+i*dw, h-margin-tl, margin+i*dw,  h-margin+tl );
-            wnd->write( margin+(i-0.2)*dw, h-margin+10, num2str((int)(range.lx+i*xstep)) );
+            xy_to_gui_xy( (i-0.2)/xticks*narr, range.ly, gx, gy );
+
+            // wnd->write( margin+(i-0.2)*dw, h-margin+10, num2str((int)(range.lx+i*xstep)) );
+            wnd->write( gx, gy+10, num2str((int)(range.lx+i*xstep)) );
         }
         // yticks
         for( int i=0; i<=yticks; i++ ) {
@@ -200,7 +237,7 @@ namespace kortex {
         }
     }
 
-    void figure::draw_grid() {
+    void Figure::draw_grid() {
         float dw = (w-2*margin)/(xticks);
         float dh = (h-2*margin)/(yticks);
 
@@ -223,76 +260,86 @@ namespace kortex {
         }
     }
 
-    void figure::plot() {
-        if( !farr ) return;
-        float dw = (w-2*margin)/(float)narr;
-        float dh = (h-2*margin)/(float)range.dy;
+    void Figure::plot() {
         wnd->set_color    ( line_color     );
         wnd->set_thickness( line_thickness );
-        for( int n=0; n<narr-1; n++ ) {
-            wnd->draw_line( margin+n*dw, h-margin-(farr[n]-range.ly)*dh, margin+n*dw+dw,  h-margin-(farr[n+1]-range.ly)*dh );
+        for( int i=0; i<narr-1; i++ ) {
+            float gx0, gy0, gx1, gy1;
+            xy_to_gui_xy( i,   farr[i  ], gx0, gy0 );
+            xy_to_gui_xy( i+1, farr[i+1], gx1, gy1 );
+            wnd->draw_line( gx0, gy0, gx1, gy1 );
         }
     }
 
-    void figure::line(float y0, int n0, float y1, int n1) {
-        if( !farr ) return;
+    void Figure::xy_to_gui_xy( float x, float y, float& gx, float& gy ) const {
         float dw = (w-2*margin)/(float)narr;
         float dh = (h-2*margin)/(float)range.dy;
-        wnd->set_color    ( line_color     );
-        wnd->set_thickness( line_thickness );
-        wnd->draw_line( margin+n0*dw, h-margin-(y0-range.ly)*dh, margin+n1*dw, h-margin-(y1-range.ly)*dh );
+        gx = margin + x * dw;
+        gy = h-margin-(y-range.ly)*dh;
     }
 
-    void figure::stem(int index) {
-        if( !farr ) return;
-        float dw = (w-2*margin)/(float)narr;
-        float dh = (h-2*margin)/(float)range.dy;
+    void Figure::line(int n0, float y0, int n1, float y1) {
+        wnd->set_color    ( line_color     );
+        wnd->set_thickness( line_thickness );
+        float gx0, gy0, gx1, gy1;
+        xy_to_gui_xy( n0, y0, gx0, gy0 );
+        xy_to_gui_xy( n1, y1, gx1, gy1 );
+        wnd->draw_line( gx0, gy0, gx1, gy1 );
+    }
 
+    void Figure::stem(int index) {
+        float gx0, gy0, gx1, gy1;
         wnd->set_color    ( line_color     );
         wnd->set_thickness( line_thickness );
         if( index<0) {
-            for( int n=0; n<narr; n++ )
-                wnd->draw_line( margin+n*dw, h-margin-(farr[n]-range.ly)*dh, margin+n*dw, h-margin );
+            for( int n=0; n<narr; n++ ) {
+                xy_to_gui_xy( n, farr[n],  gx0, gy0 );
+                xy_to_gui_xy( n, range.ly, gx1, gy1 );
+                wnd->draw_line( gx0, gy0, gx1, gy1 );
+            }
         } else {
-            wnd->draw_line( margin+index*dw, h-margin-(farr[index]-range.ly)*dh, margin+index*dw, h-margin );
+            xy_to_gui_xy( index, farr[index], gx0, gy0 );
+            xy_to_gui_xy( index, range.ly,    gx1, gy1 );
+            wnd->draw_line( gx0, gy0, gx1, gy1 );
         }
     }
 
-    void figure::text(int index, string text) {
-        if( !farr ) return;
-        float dw = (w-2*margin)/(float)narr;
-        float dh = (h-2*margin)/(float)range.dy;
+    void Figure::text(int index, string text) {
         wnd->set_color( text_color );
-        wnd->write( margin+index*dw, h-margin-(farr[index]-range.ly)*dh-20, text );
+        float gx, gy;
+        xy_to_gui_xy( index, farr[index], gx, gy );
+        wnd->write( gx, gy-20, text );
     }
 
-    void figure::scatter(int index) {
-        if( !farr ) return;
-        float dw = (w-2*margin)/(float)narr;
-        float dh = (h-2*margin)/(float)range.dy;
+    void Figure::scatter(int index) {
         wnd->set_color    ( line_color     );
         wnd->set_thickness( line_thickness );
+        float gx, gy;
         if( index<0 ) {
-            for( int n=0; n<narr; n++ )
-                wnd->draw_circle( margin+n*dw, h-margin-(farr[n]-range.ly)*dh, 2 );
+            for( int n=0; n<narr; n++ ) {
+                xy_to_gui_xy( n, farr[n], gx, gy );
+                wnd->draw_circle( gx, gy, 2 );
+            }
         } else {
-            wnd->draw_circle( margin+index*dw, h-margin-(farr[index]-range.ly)*dh, 2 );
+            xy_to_gui_xy( index, farr[index], gx, gy );
+            wnd->draw_circle( gx, gy, 2 );
         }
     }
 
-    void figure::bar(bool filled) {
-        if( !farr ) return;
+    void Figure::bar(bool filled) {
         float dw = (w-2*margin)/(float)narr;
         float dh = (h-2*margin)/(float)range.dy;
-
         int thick=line_thickness;
         if( filled ) thick*=-1;
         wnd->set_color    ( bar_color );
         wnd->set_thickness( thick     );
+        float gx, gy;
         for( int n=0; n<narr; n++ ) {
-            wnd->draw_rectangle( margin+n*dw, h-margin-(farr[n]-range.ly)*dh, dw*0.9, farr[n]*dh );
+            xy_to_gui_xy( n, farr[n], gx, gy );
+            wnd->draw_rectangle( gx, gy, dw*0.9, farr[n]*dh );
         }
     }
+
 }
 
 #endif

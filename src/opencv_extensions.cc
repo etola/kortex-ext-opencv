@@ -13,7 +13,7 @@
 
 #ifdef WITH_OPENCV
 
-#include <kortex/opencv_extensions.h>
+#include "kortex/opencv_extensions.h"
 #include <kortex/image.h>
 #include <kortex/color.h>
 

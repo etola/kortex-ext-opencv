@@ -11,7 +11,7 @@
 //
 // ---------------------------------------------------------------------------
 
-#include <kortex/rect2.h>
+#include "kortex/rect2.h"
 
 namespace kortex {
 

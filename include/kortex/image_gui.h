@@ -29,8 +29,8 @@ namespace kortex {
         void create( int window_width );
         void display();
     private:
-        gui_window  wimg;
-        gui_window* wzoom;
+        GUIWindow   wimg;
+        GUIWindow*  wzoom;
         bool        bhover;
         bool        benable_help;
         bool        benable_shadow;
@@ -51,7 +51,6 @@ namespace kortex {
         void catch_mouse();
         bool catch_keyboard();
     };
-
 
 }
 
