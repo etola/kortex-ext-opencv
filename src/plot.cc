@@ -434,19 +434,19 @@ namespace kortex {
 //
 //
 
-    void plot( vector<float>& xs, vector<float>& ys ) {
+    void plot( vector<float>& xs, vector<float>& ys, int type ) {
         Plot pt;
         pt.create( 1024, 512 );
         pt.set( xs, ys );
-        pt.set_type( PT_DOT | PT_LINE );
+        pt.set_type( type );
         pt.display();
     }
 
-    void plot( vector<float>& ys ) {
+    void plot( vector<float>& ys, int type ) {
         Plot pt;
         pt.create( 1024, 512 );
         pt.set( ys );
-        pt.set_type( PT_DOT | PT_LINE );
+        pt.set_type( type );
         pt.display();
     }
 

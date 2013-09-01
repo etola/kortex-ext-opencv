@@ -21,10 +21,10 @@ using std::vector;
 
 namespace kortex {
 
-    void plot( vector<float>& xs, vector<float>& ys );
-    void plot( vector<float>& ys );
-
     enum PlotTypes { PT_DOT=1, PT_LINE=2, PT_STEM=4 };
+
+    void plot( vector<float>& xs, vector<float>& ys, int type = PT_DOT | PT_LINE );
+    void plot( vector<float>& ys, int type = PT_DOT | PT_LINE );
 
     struct PlotParams {
         float x_shift;
