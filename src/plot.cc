@@ -11,7 +11,6 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-
 #include "kortex/plot.h"
 #include <kortex/minmax.h>
 #include <kortex/string.h>

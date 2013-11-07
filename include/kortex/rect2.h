@@ -4,13 +4,13 @@
 //
 // Copyright (C) 2013 Engin Tola
 //
-// See licence.txt file for licence information.
+// See LICENSE file for license information.
 //
 // author: Engin Tola
 // e-mail: engintola@gmail.com
+// web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-
 #ifndef KORTEX_RECT2_H
 #define KORTEX_RECT2_H
 

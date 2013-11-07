@@ -11,7 +11,6 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-
 #include "kortex/image_gui.h"
 #include <kortex/image.h>
 #include <kortex/string.h>

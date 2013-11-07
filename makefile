@@ -27,7 +27,7 @@ plot.h
 #
 # output info
 #
-installdir := /home/tola/usr/local/kortex/
+installdir := ${HOME}/usr/local/kortex/
 external_sources :=
 external_libraries := opencv kortex
 libdir := lib
@@ -44,7 +44,7 @@ custom_cflags := -std=c++0x
 #
 # optimization & parallelization ?
 #
-optimize ?= false
+optimize ?= true
 parallelize ?= true
 boost-thread ?= false
 f77 ?= false
