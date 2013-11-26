@@ -17,20 +17,22 @@
 #include <kortex/string.h>
 #include <kortex/image_space_mapping.h>
 
+#include <ctime>
+
 namespace kortex {
 
-    void display( const Image* img, int w ) {
+    void display( const Image* img, int w, double time_out ) {
         ImageGUI g;
         g.setup( img );
         g.create( w );
-        g.display();
+        g.display( time_out );
     }
 
     ImageGUI::ImageGUI() {
         wzoom = NULL;
         imgp = NULL;
         bhover = true;
-        benable_help = true;
+        benable_help = false;
         benable_shadow = true;
         gx = 0;
         gy = 0;
@@ -139,8 +141,13 @@ namespace kortex {
         wimg.reset_mouse();
     }
 
-    void ImageGUI::display() {
+    void ImageGUI::display( double time_out ) {
         wimg.reset_mouse();
+
+        time_t st;
+        time_t now;
+        time( &st );
+
         while(1) {
             reset_display();
             if( !catch_keyboard() )
@@ -151,6 +158,13 @@ namespace kortex {
             display_help();
             display_messages();
             refresh();
+
+            if( time_out != 0.0 ) {
+                time(&now);
+                double elapsed = difftime( now, st );
+                if( elapsed > time_out )
+                    break;
+            }
         }
 
     }
