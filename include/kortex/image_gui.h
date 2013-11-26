@@ -19,7 +19,7 @@
 namespace kortex {
 
     class Image;
-    void display( const Image* img, int w=0, double time_out_in_secs=0.0 );
+    void display( const Image* img, int w=0, bool interactive=true, double time_out_in_secs=0.0 );
 
     class ImageGUI {
     public:
@@ -28,6 +28,7 @@ namespace kortex {
         void setup( const Image* img );
         void create( int window_width );
         void display( double time_out=0.0 );
+        void display_only( double time_out=0.0 );
     private:
         GUIWindow   wimg;
         GUIWindow*  wzoom;

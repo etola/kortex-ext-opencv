@@ -21,11 +21,14 @@
 
 namespace kortex {
 
-    void display( const Image* img, int w, double time_out ) {
+    void display( const Image* img, int w, bool interactive, double time_out ) {
         ImageGUI g;
         g.setup( img );
         g.create( w );
-        g.display( time_out );
+        if( interactive )
+            g.display( time_out );
+        else
+            g.display_only( time_out );
     }
 
     ImageGUI::ImageGUI() {
@@ -166,8 +169,29 @@ namespace kortex {
                     break;
             }
         }
-
     }
+
+
+    void ImageGUI::display_only( double time_out ) {
+        wimg.reset_mouse();
+
+        time_t st;
+        time_t now;
+        time( &st );
+
+        while(1) {
+            if( !catch_keyboard() )
+                break;
+            catch_mouse();
+            if( time_out != 0.0 ) {
+                time(&now);
+                double elapsed = difftime( now, st );
+                if( elapsed > time_out )
+                    break;
+            }
+        }
+    }
+
 
     void ImageGUI::reset_display() {
         wimg.reset_display();
