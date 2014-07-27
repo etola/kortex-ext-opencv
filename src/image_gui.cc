@@ -91,7 +91,7 @@ namespace kortex {
             cm.maxv = 90;
             cm.invert = false;
             Image tmp;
-            image_map( imgp, cm, &tmp );
+            image_map( *imgp, cm, tmp );
             wimg.set_image( &tmp );
         } else {
             wimg.set_image( imgp );
