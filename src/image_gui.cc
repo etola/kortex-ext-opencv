@@ -11,10 +11,12 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-#include "kortex/image_gui.h"
+
+#include "kortex/image_processing.h"
 #include <kortex/image.h>
 #include <kortex/string.h>
-#include <kortex/image_space_mapping.h>
+
+#include "kortex/image_gui.h"
 
 #include <ctime>
 
@@ -84,14 +86,18 @@ namespace kortex {
         wimg.set_name("image window");
 
         if( imgp->ch() == 1 ) {
-            ColorMap cm;
-            cm.cm_type = CMT_LINEAR;
-            cm.r_type  = RT_PERCENT;
-            cm.minv = 5;
-            cm.maxv = 90;
-            cm.invert = false;
+
             Image tmp;
-            image_map( *imgp, cm, tmp );
+
+            if( imgp->type() == IT_F_GRAY ) {
+                image_stretch( *imgp, 0.0f, 0.0f, tmp );
+            } else {
+                Image gimg;
+                gimg.copy( imgp );
+                gimg.convert( IT_F_GRAY );
+                image_stretch( gimg, 0.0f, 0.0f, tmp );
+            }
+
             wimg.set_image( &tmp );
         } else {
             wimg.set_image( imgp );
