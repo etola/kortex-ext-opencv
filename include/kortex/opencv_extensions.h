@@ -14,8 +14,8 @@
 #ifndef KORTEX_PAINT_OPENCV_H
 #define KORTEX_PAINT_OPENCV_H
 
-#include "kortex/types.h"
-#include "kortex/image_text_info.h"
+#include <kortex/types.h>
+#include <kortex/image_text_info.h>
 
 #include <vector>
 #include <string>

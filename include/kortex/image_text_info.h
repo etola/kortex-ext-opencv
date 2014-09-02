@@ -24,6 +24,16 @@ namespace kortex {
         int y;
         std::string text;
         ColorName color;
+        float font_size;
+        float font_thickness;
+        ImageTextInfo() {
+            x = 20;
+            y = 20;
+            text = "";
+            color = COLOR_RED;
+            font_size = 1.0f;
+            font_thickness = 1.0f;
+        }
     };
 
 }

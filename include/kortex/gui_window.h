@@ -111,6 +111,9 @@ namespace kortex {
         //
         int  get_thickness() const { return dp_thickness; }
 
+        int  w() const { return dw; }
+        int  h() const { return dh; }
+
     private:
 
         void init_();

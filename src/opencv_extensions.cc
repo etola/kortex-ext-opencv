@@ -13,12 +13,13 @@
 // ---------------------------------------------------------------------------
 #ifdef WITH_OPENCV
 
-#include "kortex/opencv_extensions.h"
 #include <kortex/image.h>
 #include <kortex/color.h>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+#include "kortex/opencv_extensions.h"
 
 using namespace std;
 
@@ -79,12 +80,13 @@ namespace kortex {
     void write_on_image_cv(Image* img, const std::vector<ImageTextInfo> &info ) {
         assert_pointer( img );
 
-        CvFont dp_font; cvInitFont(&dp_font, CV_FONT_HERSHEY_PLAIN, 1, 1, 0, 1, CV_AA);
         IplImage*tmp = cvCreateImage(cvSize(img->w(), img->h()), IPL_DEPTH_8U, 3);
         copy_image_to_color_ipl(img, tmp);
 
         for(size_t n=0; n<info.size(); n++ ) {
             ImageTextInfo iti = info.at(n);
+            CvFont dp_font;
+            cvInitFont(&dp_font, CV_FONT_HERSHEY_PLAIN, iti.font_size, iti.font_size, 0, iti.font_thickness, CV_AA);
             Color col;
             get_color(iti.color, col.r, col.g, col.b);
             write_on_image(tmp, iti.x, iti.y, iti.text, &col, &dp_font);
