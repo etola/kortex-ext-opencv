@@ -64,11 +64,13 @@ namespace kortex {
     }
 
     void GUIWindow::create(const int& fixed) {
+        cvStartWindowThread();
         cvNamedWindow(wname.c_str(), fixed);
     }
 
     void GUIWindow::destroy() {
         cvDestroyWindow(wname.c_str());
+        cvWaitKey(50);
     }
 
     GUIWindow::~GUIWindow() {
