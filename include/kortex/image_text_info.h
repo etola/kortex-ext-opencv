@@ -34,6 +34,9 @@ namespace kortex {
             font_size = 1.0f;
             font_thickness = 1.0f;
         }
+
+        const int dx() const { return 10 * (int)text.size(); }
+        const int dy() const { return 20;                    }
     };
 
 }
