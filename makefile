@@ -27,6 +27,7 @@ plot.h
 #
 # output info
 #
+main_build_dir = ${HOME}/build/
 installdir := ${HOME}/usr/local/kortex/
 external_sources :=
 external_libraries := opencv kortex
